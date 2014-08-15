@@ -56,12 +56,6 @@ program.command('backup <domain>')
         console.log(domain);
     });
 
-program.command('ssh <domain>')
-    .description('ssh into a domain')
-    .action( function(domain){
-        console.log(domain);
-    });
-
 program.parse(process.argv);
 
 if(process.argv.length == 2){
