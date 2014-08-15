@@ -1,0 +1,17 @@
+{
+  "name": "dude",
+  "version": "0.0.1",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Jae Lee <jaequery@gmail.com> (http://jaequery.com/)",
+  "license": "ISC",
+  "dependencies": {
+    "q": "^1.0.1",
+    "commander": "^2.3.0",
+    "handlebars": "^2.0.0-alpha.4"
+  }
+}
+
