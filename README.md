@@ -2,15 +2,15 @@
 
 Dude is a CLI tool for managing LEMP in Ubuntu.
 
-###Pre-requisite
+###Install
 
-Run this on a fresh Ubuntu 14.04 to install everything you need to setup a Nginx + PHP-FPM + Mysql55 stack with the "dude" CLI tool.
+Run this on a fresh Ubuntu 14.04 to install everything you need to setup a Nginx + PHP5-FPM + Mysql55 stack with the "dude" CLI tool.
 
 ```
 apt-get update -y && apt-get install -y wget && wget -q -O - http://dude.jaequery.com/install.php |sh
 ```
 
-###Example
+###Example usage
 
 To create a vhost, just do the following:
 ```
