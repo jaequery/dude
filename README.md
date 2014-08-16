@@ -13,9 +13,25 @@ dude start site.com
 
 This creates an nginx vhost for site.com.
 
+```
 Your working app directory: ~/www/site.com
 Your document root: ~/www/site.com/public
-Your 
+Your
+```
+
+If you want to take it down temporarily:
+
+```
+dude stop site.com
+```
+
+To take it down permanently and delete it:
+
+```
+dude delete site.com
+```
+
+
 
 ====
 
