@@ -57,9 +57,6 @@ root@1c14046357b7:~/# dude
 
   Commands:
 
-    init [options]
-       initialize dude
-
     create <domain>
        create a domain
 
@@ -75,7 +72,7 @@ root@1c14046357b7:~/# dude
     delete <domain>
        delete a domain
 
-    backup <domain>
+    backup <domain> (coming soon)
        backup domain
 
 
