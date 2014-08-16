@@ -20,8 +20,9 @@ dude create site.com
 This creates an nginx vhost for site.com.
 
 ```
-Your working app directory: ~/www/site.com
-Your document root: ~/www/site.com/public
+Your working app path: ~/www/site.com
+Your document root path: ~/www/site.com/public
+Your access and error logs path: ~/www/site.com/logs
 ```
 
 Now start the vhost and your site.com should be up and running
