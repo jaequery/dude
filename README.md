@@ -26,6 +26,7 @@ Created nginx vhost file in: /etc/nginx/sites-enabled/site.com
 Created working app folder in: ~/www/site.com
 Created docroot folder in: ~/www/site.com/public
 Created logs folder in: ~/www/site.com/logs
+Set folder to group www-data and gave group write access to: ~/www/site.com
 ```
 
 Now start the vhost and your site.com should be up and running
