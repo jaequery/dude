@@ -17,12 +17,13 @@ To create a vhost, just do the following:
 dude create site.com
 ```
 
-This creates an nginx vhost for site.com.
+This performed the following:
 
 ```
-Your working app path: ~/www/site.com
-Your document root path: ~/www/site.com/public
-Your access and error logs path: ~/www/site.com/logs
+Created nginx vhost file in: /etc/nginx/sites-enabled/site.com
+Created working app folder in: ~/www/site.com
+Created docroot folder in: ~/www/site.com/public
+Created logs folder in: ~/www/site.com/logs
 ```
 
 Now start the vhost and your site.com should be up and running
