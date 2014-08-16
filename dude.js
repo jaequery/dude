@@ -6,7 +6,7 @@
 
 var program = require('commander');
 var dude = require('./instance.js');
-//init();
+
 program.version('0.0.1');
 
 program.command('init')
@@ -47,7 +47,8 @@ program.command('list')
 program.command('delete <domain>')
     .description('delete a domain')
     .action( function(domain){
-        console.log('deleting domain ... ',domain);
+	var container = new dude(domain);
+	container.delete();
     });
 
 program.command('backup <domain>')

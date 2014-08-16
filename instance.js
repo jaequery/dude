@@ -1,65 +1,100 @@
 var Q = require('q'),
-    exec = require('child_process').exec,
-    handlebars = require('handlebars'),
-    fs = require('fs');
-
-var dude_path = '/tmp/dude/';
+exec = require('child_process').exec,
+handlebars = require('handlebars'),
+fs = require('fs');
 
 var Instance = function instance(domain){
+
     var self = this;
-    this.domain = domain;
-    this.project_dir = dude_path + domain;
-    this.project_vhost = this.project_dir + '/vhost';
-    this.project_app = '/var/www/'+domain;
-    this.project_doc_root = this.project_app + '/public';
-    this.symlink_path = '/etc/nginx/sites-enabled/' + domain;
+
+    this.init = function(){
+	return Q.promise( function(resolve, reject, notify){
+	    get_user().then(function(user){
+		self.domain = domain;
+		self.cwd = require('path').dirname(require.main.filename);
+		self.home_path = '/home/' + user;
+		self.dude_path = self.home_path + '/.dude';
+		self.project_dir = self.dude_path + '/' + domain;
+		self.project_vhost = self.project_dir + '/vhost';
+		self.project_app = self.home_path + '/www/'+domain;
+		self.project_doc_root = self.project_app + '/public';
+		self.project_logs = self.project_app + '/logs';
+		self.symlink_path = '/etc/nginx/sites-enabled/' + domain;
+		self.vhost_path = self.project_vhost + '/' + domain;
+		self.user = user;
+		return resolve();
+	    })
+	})
+    }
+
     this.create = function(){
-	return self.create_directories()
+	return self.init()
+	    .then(self.create_directories)
 	    .then(self.generate_vhost)
             .then(self.generate_sample_index)
+	    .then(self.set_perms)
 	    .fail(console.log)
-	    .done(console.log(self.domain + ' created'));
+	    .done(console.log(domain + ' created'));
+    }
+
+    this.delete = function(){
+	return self.init()
+	.then(	self.stop(self.domain) )
+	.then( function(){
+	    var cmd = '/bin/rm -rf ' + self.project_app;
+	    exec(cmd, function(err,stout,sterr){
+		if(err){
+		    return reject(err);
+		}else{
+	            console.log(self.domain + ' has been deleted');
+		}
+	    });
+	});
     }
 
     this.start = function(){
-	var cmd = '/bin/ln -s '+self.vhost_path + ' ' + self.symlink_path;
-	exec(cmd, function(err,stout,sterr){
-	    if(err){
-		//console.log('err',err);
-		console.log(self.domain + ' already started')
-	    }else{
-
-		var cmd = "/etc/init.d/nginx restart";
-		exec(cmd, function(err, stout, sterr){
-		    if(err) {
-			console.log(err);
-		    }else{
-			console.log(self.domain + ' started');
-		    }
-		});
-	    }
+	return self.init()
+	.then( function(){
+	    var cmd = 'sudo ln -s '+self.vhost_path + ' ' + self.symlink_path;
+	    exec(cmd, function(err,stout,sterr){
+		if(err){
+		    console.log(self.domain + ' already started')
+		}else{
+		    var cmd = "sudo /etc/init.d/nginx restart";
+		    exec(cmd, function(err, stout, sterr){
+			if(err) {
+			    console.log(err);
+			}else{
+			    console.log(self.domain + ' started');
+			}
+		    });
+		}
+	    })
 	})
+
     }
 
     this.stop = function(){
-	var cmd = '/bin/rm ' + self.symlink_path;
-	exec(cmd, function(err,stout,sterr){
-	    if(err){
-		console.log('err',err);
-	    }else{
+	return self.init()
+	.then( function(){
+	    var cmd = 'sudo rm ' + self.symlink_path;
+	    exec(cmd, function(err,stout,sterr){
+		if(err){
+		    console.log('err',err);
+		}else{
 
-		// restart nginx
-		var cmd = "/etc/init.d/nginx restart";
-		exec(cmd, function(err, stout, sterr){
-		    if(err) {
-			console.log(err);
-		    }else{
-			console.log(self.domain + ' stopped');
-		    }
-		});
-	    }
+		    // restart nginx
+		    var cmd = "sudo /etc/init.d/nginx restart";
+		    exec(cmd, function(err, stout, sterr){
+			if(err) {
+			    console.log(err);
+			}else{
+			    console.log(self.domain + ' stopped');
+			}
+		    });
+		}
+	    })
 	})
-
     }
 
     this.create_directories = function(){
@@ -72,6 +107,8 @@ var Instance = function instance(domain){
                     return create_directory(self.project_app);
                 }).then( function(){
                     return create_directory(self.project_doc_root);
+		}).then( function(){
+		    return create_directory(self.project_logs);
                 }).fail( function(){
                     reject()
                 }).done( function(){
@@ -82,17 +119,17 @@ var Instance = function instance(domain){
 
     this.generate_sample_index = function(){
         return Q.promise( function(resolve, reject, notify){
-            read_template('sample.html').then( function(html){
+            read_template(self.cwd+'/templates/index.php').then( function(html){
                 var template = handlebars.compile(html);
                 var string = template( {domain:self.domain} )
-                //write string to vhost/default
-                console.log(string);
-                fs.writeFile(self.project_doc_root + '/index.html', string, function(err){
+
+                fs.writeFile(self.project_doc_root + '/index.php', string, function(err){
                     if(err){
                         return reject(err);
-                    }
-                    console.log('sample generated');
-                    resolve();
+                    }else{
+                        //console.log('sample generated');
+                        return resolve();
+		    }
                 });
             })
         })
@@ -100,58 +137,63 @@ var Instance = function instance(domain){
 
     this.generate_vhost = function(){
         return Q.promise( function(resolve, reject, notify){
-
-            read_template('nginx_vhost.conf').then( function(conf){
-
+            read_template(self.cwd+'/templates/nginx_vhost.conf').then( function(conf){
                 var template = handlebars.compile(conf);
-                var string = template( {domain:self.domain} )
-		var vhost_path = self.project_vhost + '/default';
+                var string = template( {domain:self.domain, doc_root_path: self.project_doc_root, log_path: self.project_logs, app_path: self.project_app} )
 
-                fs.writeFile(vhost_path, string, function(err){
+                fs.writeFile(self.vhost_path, string, function(err){
                     if(err){
+			console.log(self.vhost_path);
                         return reject(err);
                     }else{
-			//console.log('vhost generated');
+			return resolve();
 		    }
                 });
             })
         })
     }
 
+    this.set_perms = function(){
+	return Q.promise( function(resolve, reject, notify){
+	    get_user().then( function(user){
+		var cmd = 'sudo chown -R ' + user + ':www-data ' + self.project_app + ' && chmod -R g+w ' + self.project_app;
+		exec(cmd, function(err,stout,sterr){
+                    if(err){
+                	console.log(err);
+			return reject(err);
+            	    }else{
+			return resolve();
+            	    }
+        	});
+	    })
+	})
+    }
 }
 
 module.exports = Instance;
 
 function check_directory(dir_path){
-    //console.log('checking for directory');
     return Q.promise( function(resolve,reject,notify){
-        var cmd = 'touch ' + dir_path + '/test';
-        exec(cmd, function(err,stout,sterr){
-            if(err){
-                //console.log('err',err);
-                return reject(dir_path);
-            }else{
-                //console.log('directory found: ' + dir_path);
-                return resolve();
-            }
-        })
+	if (fs.existsSync(dir_path)) {
+            return resolve();
+        }else{
+	    return reject();
+	}
     });
 }
 
 function create_directory(dir_path){
-    //console.log('creating directory');
     return Q.Promise(function(resolve,reject,notify){
         check_directory(dir_path).then( function(){
-            resolve();
+            return resolve();
         }).fail(function(){
             var cmd = 'mkdir -p ' + dir_path;
             exec(cmd, function(err,stout,sterr){
                 if(err){
                     console.log('error creating directory',err);
-                    reject();
+                    return reject();
                 }else{
-                    //console.log('directory created');
-                    resolve();
+                    return resolve();
                 }
             })
         })
@@ -159,11 +201,27 @@ function create_directory(dir_path){
 }
 
 function read_template(file){
-    //console.log('reading template');
     return Q.promise( function(resolve,reject,notify){
-        fs.readFile('templates/' + file, function(err, data){
-            if(err){ return reject(err); }
+        fs.readFile(file, function(err, data){
+            if(err){ 
+		console.log('error', err);
+		return reject(err); 
+	    }
             return resolve(data.toString());
         });
+    })
+}
+
+function get_user(){
+    return Q.promise( function(resolve,reject,notify){
+	var cmd = '/usr/bin/whoami';
+        exec(cmd, function(err,stout,sterr){
+            if(err){
+                console.log(err);
+                return reject();
+            }else{
+                return resolve(stout.trim());
+            }
+        })
     })
 }
