@@ -10,7 +10,7 @@ Run this on a fresh Ubuntu 14.04 to install everything you need to setup a Nginx
 apt-get update -y && apt-get install -y wget && wget -q -O - http://dude.jaequery.com/install.php |sh
 ```
 
-###Example usage
+###Usage
 
 To create a vhost, just do the following:
 ```
