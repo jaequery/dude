@@ -1,6 +1,6 @@
 #dude - It's the cPanel killer, SRSLY!
 
-Dude is an CLI tool for managing LEMP vhosts in Ubuntu.
+Dude is a CLI tool for managing LEMP vhosts in Ubuntu.
 
 
 ###Example
