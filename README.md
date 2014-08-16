@@ -1,4 +1,4 @@
-dude - The ultimate cpanel alternative for LEMP in Ubuntu, all CLI-based!
+dude - The cPanel killer! An automated LEMP management tool for Ubuntu! 
 ====
 
 ```
