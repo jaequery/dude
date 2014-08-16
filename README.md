@@ -1,4 +1,8 @@
-dude - The cPanel killer! An automated LEMP management tool for Ubuntu! 
+dude - The cPanel killer! 
+
+Dude is an automated LEMP management tool for Ubuntu.
+
+
 ====
 
 ```
