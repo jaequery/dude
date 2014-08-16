@@ -3,6 +3,15 @@
 Dude is an automated LEMP management tool for Ubuntu.
 
 
+###Example
+
+To create a vhost, just do the following:
+```
+dude create site.com
+dude start site.com
+```
+
+
 ====
 
 ```
