@@ -22,7 +22,6 @@ This creates an nginx vhost for site.com.
 ```
 Your working app directory: ~/www/site.com
 Your document root: ~/www/site.com/public
-Your
 ```
 
 Now start the vhost and your site.com should be up and running
