@@ -35,8 +35,12 @@ dude delete site.com
 
 ====
 
+
+Symlink the dude.js to /usr/local/bin/dude
+
+
 ```
-root@1c14046357b7:~/# node dude.js
+root@1c14046357b7:~/# dude
 
   Usage: dude [options] [command]
 
