@@ -1,4 +1,4 @@
-#dude - LEMP on Ubuntu has never been so easy!
+#dude - Managing LEMP on Ubuntu made easy!
 
 Dude is a CLI tool for managing LEMP in Ubuntu.
 
