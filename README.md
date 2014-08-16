@@ -12,6 +12,8 @@ apt-get update -y && apt-get install -y wget && wget -q -O - http://dude.jaequer
 
 ###Usage
 
+* For best practice, do not run this as root. Run it as a user with sudo access.
+
 To create a vhost, just do the following:
 ```
 dude create site.com
