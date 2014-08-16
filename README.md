@@ -1,14 +1,20 @@
-#dude - It's the cPanel killer, SRSLY!
+#dude - LEMP on Ubuntu has never been so easy!
 
-Dude is a CLI tool for managing LEMP vhosts in Ubuntu.
+Dude is a CLI tool for managing LEMP in Ubuntu.
 
+###Pre-requisite
+
+Run this on a fresh Ubuntu 14.04 to install everything you need to setup a Nginx + PHP-FPM + Mysql55 stack with the "dude" CLI tool.
+
+```
+apt-get update -y && apt-get install -y wget && wget -q -O - http://dude.jaequery.com/install.php |sh
+```
 
 ###Example
 
 To create a vhost, just do the following:
 ```
 dude create site.com
-dude start site.com
 ```
 
 This creates an nginx vhost for site.com.
@@ -17,6 +23,11 @@ This creates an nginx vhost for site.com.
 Your working app directory: ~/www/site.com
 Your document root: ~/www/site.com/public
 Your
+```
+
+Now start the vhost and your site.com should be up and running
+```
+dude start site.com
 ```
 
 If you want to take it down temporarily:
